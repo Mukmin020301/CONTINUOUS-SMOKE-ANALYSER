@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0.."
 setlocal enabledelayedexpansion
 echo ===================================================
 echo  FAT SMOKE 1.0 - PIC18F46K22 XC8 COMPILER
@@ -10,8 +11,8 @@ if not exist %XC8% (
     set XC8="C:\Program Files\Microchip\xc8\v2.46\bin\xc8-cc.exe"
 )
 
-echo Compiling main.c for PIC18F46K22...
-%XC8% -mcpu=18F46K22 -o fat_smoke_firmware.hex main.c
+echo Compiling firmware/legacy/main.c for PIC18F46K22...
+%XC8% -mcpu=18F46K22 -o fat_smoke_firmware.hex firmware\legacy\main.c
 
 if %errorlevel% neq 0 (
     echo [ERROR] Compilation failed!

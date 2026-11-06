@@ -15,12 +15,21 @@ Continuous optical smoke opacity meter and absorption coefficient ($k$-value) an
 ---
 
 ## 📂 Repository Contents
-- **`SMOKE-1.pbp`**: Primary PICBASIC PRO firmware with non-blocking timing, 16-sample ADC oversampling, Beer-Lambert $k$-value lookup, and whiteboard-compliant 3-point calibration.
-- **`GEMINI.md`**: Firmware coding standards modeled after senior engineering standards (`DBW.pbp`). Automatically loaded as instructions by Antigravity AI.
+- **`firmware/`**:
+  - `SMOKE-1.pbp`: Primary PICBASIC PRO firmware with non-blocking timing, 16-sample ADC oversampling, Beer-Lambert $k$-value lookup, and whiteboard-compliant 3-point calibration.
+  - `fat_smoke_oled_meter/`: Secondary OLED dashboard display sketch (Arduino Nano).
+  - `legacy/`: Historical C and PBP firmware backups.
+- **`hardware/`**:
+  - `schematics/`: Fuel Stretcher V2.0 circuit schematics, PDF schematics, and pinout diagrams.
+  - `guides/`: Hardware modification, jumper, and soldering guides (SW1, SW2, Q2, R4/R6 bridge).
+  - `photos/`: PCB inspection macro photos, microscope captures, and whiteboard notes.
+- **`mechanical/`**: SolidWorks 3D CAD sketches, PTFE optical housing dimensions, and product render concepts.
+- **`docs/`**: Project documentation, Word reports, and component costing spreadsheets.
+- **`tools/`**: Flashing scripts (`flash_pic.bat`, `upload_oled.bat`), compiler configurations, and Python guide generators.
+- **`reference/`**: Senior engineering reference firmware (`DBW.pbp`).
+- **`GEMINI.md`**: Firmware coding standards modeled after senior engineering style (`DBW.pbp`).
 - **`PROJECT_CONTEXT.md`**: Comprehensive briefing covering hardware pinouts, circuit physics, calibration SOP, and firmware architecture.
-- **`reference/`**: Reference firmware files (`DBW.pbp`) illustrating the company's established coding standards.
-- **`fat_smoke_oled_meter/`**: Secondary display / meter code.
-- **Schematics & Diagrams**: Wiring, pinouts, and PCB images for Fuel Stretcher V2.0.
+- **`PUSH_TO_GITHUB.bat`**: One-click batch utility to push commits to GitHub.
 
 ---
 

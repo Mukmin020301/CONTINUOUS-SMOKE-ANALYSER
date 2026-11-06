@@ -17,7 +17,7 @@
 ---
 
 ## 2. Peta Sambungan Perkakasan (Fuel Stretcher V2.0 -> Komponen)
-* **Fail Skematik Penuh PCB:** [`FUEL STRETCHER V2.0/FS_V2.0.pdf`](FUEL%20STRETCHER%20V2.0/FS_V2.0.pdf) (Skematik & litar Fuel Stretcher V2.0)
+* **Fail Skematik Penuh PCB:** [`hardware/schematics/FS_V2.0.pdf`](hardware/schematics/FS_V2.0.pdf) (Skematik & litar Fuel Stretcher V2.0)
 * **P1 Pin 15 (`injOut2` / RC2 / Q2 IGBT):** Memacu katod Red LED pemancar cahaya (PWM 2 kHz)
 * **P1 Pin 2 (`TPS` / RD4 / AN24):** Isyarat voltan analog daripada sensor fotodetektor OPT101 (melalui U2 Op-Amp)
 * **P1 Pin 8 (`Boost` / RA5):** Butang kalibrasi (*Pushbutton* ke +5V dengan perintang pull-down 1.5k $\Omega$ ke GND)
@@ -29,7 +29,7 @@
 
 ---
 
-## 3. Kod Firmware Terkini: `SMOKE-1.pbp` (atau `D:\PBP\SMOKE-1.pbp`)
+## 3. Kod Firmware Terkini: `firmware/SMOKE-1.pbp` (atau `D:\PBP\SMOKE-1.pbp`)
 * **Logik Utama (`Main:`):**
   * Kitaran *non-blocking timer* pantas (5ms selang masa: `pause 5`, `time = time + 1`).
   * Telemetri dihantar setiap 500ms (`time = 100`).
@@ -63,6 +63,6 @@ Disalin daripada `GEMINI.md` berasaskan rujukan utama `D:\Users\ANG\Desktop\Mukm
 ---
 
 ## 5. Status Semasa Projek
-* Firmware `SMOKE-1.pbp` telah bebas dari semua bug perkakasan/perisian dan lulus kompilasi 100%.
+* Firmware `firmware/SMOKE-1.pbp` telah bebas dari semua bug perkakasan/perisian dan lulus kompilasi 100%.
 * Litar butang berfungsi sempurna dengan perintang pull-down 1.5k $\Omega$ ke GND dan butang ke +5V.
 * Pembacaan telemetri memaparkan `Opas Raw`, `Opas %`, dan `k-value` dengan stabil tanpa riak atau nombor negatif.
