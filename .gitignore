@@ -1,0 +1,35 @@
+# PICBASIC PRO Compiler Artifacts
+*.ASM
+*.MAC
+*.lst
+*.o
+*.rlf
+*.s
+*.hex
+*.COD
+*.LST
+*.OBJ
+*.HEX
+*.err
+*.ERR
+
+# XC8 / C Compiler Artifacts
+*.d
+*.p1
+*.cmf
+*.elf
+*.hxl
+*.sdb
+*.sym
+
+# Large binaries & temp environments
+arduino-cli.zip
+arduino_env/
+arduino_tools/
+
+# OS / Editor temporary files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.tmp

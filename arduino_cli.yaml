@@ -1,0 +1,6 @@
+board_manager:
+  additional_urls: []
+directories:
+  data: D:\Users\ANG\Desktop\Mukmin\CONTINUOUS SMOKE ANALYSER\arduino_env\data
+  downloads: D:\Users\ANG\Desktop\Mukmin\CONTINUOUS SMOKE ANALYSER\arduino_env\downloads
+  user: D:\Users\ANG\Desktop\Mukmin\CONTINUOUS SMOKE ANALYSER\arduino_env\user

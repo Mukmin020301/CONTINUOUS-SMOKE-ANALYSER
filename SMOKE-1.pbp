@@ -1,0 +1,348 @@
+'****************************************************************
+'*  Name    : FAT_SMOKE_LED_PWM.PBP                             *
+'*  Author  : Mukmin & Engineering Team                         *
+'*  Notice  : Focus Applied Technologies (c) 2026               *
+'*  Target  : PIC18F46K22 @ 16 MHz (Fuel Stretcher V2.0 PCB)    *
+'*  IDE     : MicroCode Studio Plus                             *
+'*  Compiler: PICBASIC PRO (PBP3 / PBP 2.60)                    *
+'*  Date    : November 2026                                     *
+'*                                                              *
+'*  PURPOSE : Continuous Optical Smoke Analyser (Opacity & k)   *
+'*  - PWM Drive : Pin 15 (injOut2 / PORTC.2 via Q2 IGBT)        *
+'*  - Optical In: Pin 2 (TPS / PORTD.4 / AN24 via U2 Op-Amp)    *
+'*  - Chamber   : Closed Flow Tube L = 21.5 cm (0.215 m)        *
+'*  - Telemetry : Pin 11 (txRS / PORTC.6 at 9600 Baud)          *
+'****************************************************************
+
+'OSCILLATOR & CLOCK CONFIGURATION================================
+OSCCON = %01110111          ' 16 MHz HF-INTOSC stable
+DEFINE OSC 16
+
+'ADC CONFIGURATION===============================================
+DEFINE ADC_BITS 10          ' 10-bit Analog to Digital
+DEFINE ADC_SAMPLEUS 50      ' 50 us acquisition time
+ADCON1 = %00000000          ' Vref+ = VDD (5.0V), Vref- = VSS (0V)
+ADCON2 = %10100101          ' Right justified, 8 TAD, FOSC/16
+ADCON0.0 = 1                ' Enable ADC module
+
+'PORT I/O CONFIGURATION==========================================
+' PORTA: Digital inputs/outputs
+ANSELA = %00000000
+TRISA  = %11111111
+
+' PORTB: Pushbuttons (injSens1 = RB0, injSens2 = RB1)
+ANSELB = %00000000          ' Digital
+TRISB  = %11111111          ' Inputs
+INTCON2.7 = 0               ' Enable PORTB weak pull-ups
+WPUB = %00000011            ' Pull-ups on RB0, RB1
+
+' PORTC: Pin 15 injOut2 (RC2 = PWM), Pin 16 injOut3 (RC1 = Blower), Pin 11 txRS (RC6)
+ANSELC = %00000000          ' Digital
+TRISC  = %10111001          ' RC2=Out (PWM), RC1=Out (Blower), RC6=Out (TX), RC7=In (RX)
+PORTC.1 = 0                 ' Safety: Force Blower OFF
+
+' PORTD: Status LEDs (RD2 Green, RD3 Red), Pin 14 injOut1 (RD1 = Heater), Pin 2 TPS (RD4 = AN24)
+ANSELD = %00010000          ' RD4 (AN24) is Analog Input (OPT101)
+TRISD  = %11110001          ' RD1=Out (Heater), RD2=Out (Green LED), RD3=Out (Red LED), RD4=In (OPT101)
+PORTD.1 = 0                 ' Safety: Force Heater OFF
+PORTD.2 = 0                 ' Green LED OFF
+PORTD.3 = 0                 ' Red LED OFF
+
+'PORT MAPPING & ALIASES==========================================
+LEDG        VAR PORTD.2     ' Onboard Green LED (D1)
+LEDR        VAR PORTD.3     ' Onboard Red LED (D2)
+'Btn_SW1    VAR PORTB.0     ' Pushbutton 1 (injSens1)
+ButIn       VAR PORTA.5     ' Pushbutton on Pin 8 (Boost)
+
+'VARIABLES=======================================================
+pct         VAR BYTE        ' Current PWM % (0 to 100)
+time        VAR WORD        ' Time counter
+duty10      VAR WORD        ' 10-bit PWM duty (0 to 1000)
+Duty100     VAR WORD        ' The Duty to give us our target 100% Trans signal
+step_idx    VAR BYTE        ' Step index (0 to 10)
+OpasR       VAR WORD        ' 10-bit ADC raw reading (0 to 1023)
+OpasZ       VAR WORD        ' Zero Duty Opacity RAW reading
+OpasP       VAR WORD        ' 0-100% Opacity calculated value
+Opas100     VAR WORD        ' Target Opacity Raw value at 100% Transparent
+Opas50      VAR WORD        ' 50% ND filter raw ADC reading
+k_val       VAR WORD        ' Light absorption coefficient k * 100 (in m^-1)
+ad_accum    VAR WORD        ' Averaging accumulator
+v_mv        VAR WORD        ' Millivolts (0 to 5000 mV)
+v_whole     VAR BYTE        ' Whole volts (0 to 5 V)
+v_dec       VAR BYTE        ' Decimals (0 to 99)
+i           VAR WORD        ' Loop counter
+j           VAR BYTE        ' Counter
+k           VAR BYTE        ' Averaging loop counter
+btn_hold    VAR WORD        ' Button press duration counter
+ButO        VAR BIT         ' Button state tracker
+But         VAR BIT
+
+'HARDWARE UART SETUP (9600 BAUD @ 16 MHz)=========================
+TXSTA1   = %00100100        ' TXEN=1, BRGH=1
+RCSTA1   = %10010000        ' SPEN=1, CREN=1
+BAUDCON1 = %01001000        ' BRG16=1
+SPBRG1   = 160              ' 9600 Baud (416 counts)
+SPBRGH1  = 1
+
+'TIMER2 & CCP1 HARDWARE PWM (250 Hz for IGBT Drive)==============
+PR2         = 249           ' Period = 250 Hz at 16 MHz with 1:64 prescaler
+CCPTMRS0    = %00000000     ' CCP1 uses Timer2
+ECCP1AS     = 0             ' Auto-shutdown disabled
+PWM1CON     = 0             ' Zero dead-band delay
+CCP1CON     = %00001100     ' Single PWM active-high mode
+PSTR1CON    = %00000001     ' Steer PWM output to P1A (PORTC.2 / Pin 15)
+CCPR1L      = 0             ' Start at 0%
+T2CON       = %00000111     ' Timer2 ON, Prescaler 1:64
+
+'INITIALIZATION & BOOT BLINK=====================================
+CLEAR
+
+step_idx  = 0
+Duty100   = 100             ' Initial default
+Opas100   = 400             ' Initial default target
+
+PAUSE 500                   ' Power stabilization delay
+
+HSEROUT [13, 10, 13, 10]
+HSEROUT ["======================================================================", 13, 10]
+HSEROUT ["   FAT SMOKE 1.0 - OPTICAL SMOKE ANALYSER (PICBASIC PRO)", 13, 10]
+HSEROUT ["   Hardware : Focus Applied Tech Fuel Stretcher V2.0 (18F46K22)", 13, 10]
+HSEROUT ["   Chamber  : Closed Flow Tube L = 21.5 cm (0.215 m)", 13, 10]
+HSEROUT ["   Drive Pin: Pin 15 (injOut2 / PORTC.2 -> Q2 IGBT)", 13, 10]
+HSEROUT ["   Sensor In: Pin 2 (TPS / PORTD.4 / AN24 -> OPT101)", 13, 10]
+HSEROUT ["   Outputs  : Opas Raw | Opas % | k Extinction Coefficient (m^-1)", 13, 10]
+HSEROUT ["   Controls : Short Push: Fast 0/100 Recal | Long Push: 3-Pt Cal", 13, 10]
+HSEROUT ["======================================================================", 13, 10, 13, 10]
+
+' Step 0: Boot Blink (Green LED x 5)
+FOR i = 1 TO 5
+    LEDG = 1
+    PAUSE 50
+    LEDG = 0
+    PAUSE 50
+NEXT i
+
+CALL RECAL
+
+HSEROUT ["Running normal code. Zero: ", DEC OpasZ, " 100% Target: ", DEC Opas100, " Duty100: ", DEC Duty100, 13, 10, 13, 10]
+HPWM 1, Duty100, 2000       ' Set calibrated HPWM out
+
+'MAIN CONTROL LOOP===============================================
+Main:
+    ' 1. READ AND REPORT OPACITY & K-VALUE (Averaged 16 samples)
+    PAUSE 5
+    time = time + 1
+    IF time = 100 THEN
+        time = 0    
+        
+        ' Oversample ADC (16 readings averaged)
+        ad_accum = 0
+        FOR k = 1 TO 16
+            ADCIN 24, i
+            ad_accum = ad_accum + i
+            PAUSEUS 50
+        NEXT k
+        OpasR = ad_accum / 16
+
+        ' Clamped Opacity Calculation (0% to 100%)
+        IF OpasR >= Opas100 THEN
+            OpasP = 0       ' Clean air clamp: 0% opacity
+        ELSE
+            IF OpasR <= OpasZ THEN
+                OpasP = 100 ' Full darkness clamp: 100% opacity
+            ELSE
+                OpasP = (Opas100 - OpasR) * 100 / (Opas100 - OpasZ)
+            ENDIF
+        ENDIF
+        
+        ' Compute Beer-Lambert k-value based on L = 0.215 m
+        GOSUB CALC_K_VALUE
+
+        ' Display Telemetry: Raw ADC, Opacity %, and k-value (m^-1)
+        HSEROUT ["Opas Raw: ", DEC OpasR, " | Opas%: ", DEC OpasP, "% | k: ", DEC (k_val / 100), ".", DEC2 (k_val // 100), " m^-1", 13, 10]
+    ENDIF
+
+    ' 2. CHECK BUTTON (SHORT VS LONG PUSH DETECTION)
+    IF ButIn = 1 THEN
+        btn_hold = 0
+        WHILE ButIn = 1
+            PAUSE 10
+            btn_hold = btn_hold + 1
+            IF btn_hold > 150 THEN
+                LEDG = 1    ' Visual indicator: long push threshold reached
+            ENDIF
+        WEND
+        LEDG = 0
+
+        ' Check duration after button is released
+        IF btn_hold >= 150 THEN
+            ' LONG PUSH: 3-Point Calibration (0, 100, 50)
+            CALL CAL_3PT
+        ELSE
+            IF btn_hold >= 3 THEN
+                ' SHORT PUSH: Fast Recalibration (0, 100)
+                CALL RECAL
+            ENDIF
+        ENDIF
+        time = 0
+    ENDIF
+
+    GOTO Main
+
+'SUBROUTINES=====================================================
+
+' CALCULATE K-VALUE VIA BEER-LAMBERT LOOKUP (L = 0.215 m)-------
+' Table maps Opacity % (0 to 100) to k * 100 (in m^-1)
+CALC_K_VALUE:
+    IF OpasP > 100 THEN OpasP = 100
+    LOOKUP2 OpasP, [0, 5, 9, 14, 19, 24, 29, 34, 39, 44, _
+                    49, 54, 59, 65, 70, 76, 81, 87, 92, 98, _
+                    104, 110, 116, 122, 128, 134, 140, 146, 153, 159, _
+                    166, 173, 179, 186, 193, 200, 208, 215, 222, 230, _
+                    238, 245, 253, 261, 270, 278, 287, 295, 304, 313, _
+                    322, 332, 341, 351, 361, 371, 382, 393, 403, 415, _
+                    426, 438, 450, 462, 475, 488, 502, 516, 530, 545, _
+                    560, 576, 592, 609, 627, 645, 664, 684, 704, 726, _
+                    749, 772, 798, 824, 852, 882, 914, 949, 986, 1027, _
+                    1071, 1120, 1175, 1237, 1309, 1393, 1497, 1631, 1820, 2142, _
+                    2500], k_val
+    RETURN
+
+' FAST 0 / 100 RECALIBRATION------------------------------------
+RECAL:
+    j = 0                   ' Reset counter for clean calibration
+    HSEROUT ["0% Cal (LED OFF)...", 13, 10]
+    HPWM 1, 0, 2000         ' 2kHz HPWM out 0%
+    PAUSE 500
+    
+    ' Sample averaged 0% Dark
+    ad_accum = 0
+    FOR k = 1 TO 16
+        ADCIN 24, i
+        ad_accum = ad_accum + i
+        PAUSEUS 50
+    NEXT k
+    OpasZ = ad_accum / 16
+    HSEROUT ["   OpasZ = ", DEC OpasZ, 13, 10]
+
+    HSEROUT ["0-100% Cal (Scanning PWM)...", 13, 10]
+
+    FOR i = 1 TO 255        ' Loop through duty cycles (0-255 for HPWM)
+        HPWM 1, i, 2000
+        PAUSE 20
+        ADCIN 24, OpasR
+        IF OpasR >= 400 THEN
+            Duty100 = i     ' Set target PWM duty
+            EXIT
+        ENDIF
+    NEXT i
+
+    ' Apply target duty and let sensor settle
+    HPWM 1, Duty100, 2000
+    PAUSE 100
+
+    ' Read stabilized actual clean air 100% baseline
+    ad_accum = 0
+    FOR k = 1 TO 16
+        ADCIN 24, i
+        ad_accum = ad_accum + i
+        PAUSEUS 50
+    NEXT k
+    Opas100 = ad_accum / 16
+    HSEROUT ["   Duty100 = ", DEC Duty100, " | Opas100 Baseline = ", DEC Opas100, 13, 10]
+    RETURN
+
+' 3-POINT CALIBRATION: 0, 100, 50 (LONG PUSH)-------------------
+CAL_3PT:
+    HSEROUT [13, 10, "==================================================", 13, 10]
+    HSEROUT ["   [LONG PUSH] 3-POINT CALIBRATION (0, 100, 50)   ", 13, 10]
+    HSEROUT ["==================================================", 13, 10]
+
+    ' 1. BLINK FAST @ 0/100
+    FOR i = 1 TO 6
+        LEDG = 1
+        PAUSE 80
+        LEDG = 0
+        PAUSE 80
+    NEXT i
+
+    ' Sample averaged 0% Dark (LED OFF)
+    HSEROUT ["1. Sampling 0% Dark...", 13, 10]
+    HPWM 1, 0, 2000
+    PAUSE 500
+    ad_accum = 0
+    FOR k = 1 TO 16
+        ADCIN 24, i
+        ad_accum = ad_accum + i
+        PAUSEUS 50
+    NEXT k
+    OpasZ = ad_accum / 16
+    HSEROUT ["   0% Dark OpasZ = ", DEC OpasZ, 13, 10]
+
+    ' Sample 100% Transparent (Scan PWM)
+    HSEROUT ["2. Scanning for 100% Target...", 13, 10]
+    j = 0
+    FOR i = 1 TO 255
+        HPWM 1, i, 2000
+        PAUSE 20
+        ADCIN 24, OpasR
+        IF OpasR >= 400 THEN
+            Duty100 = i
+            EXIT
+        ENDIF
+    NEXT i
+    HPWM 1, Duty100, 2000
+    PAUSE 100
+
+    ' Read stabilized actual clean air 100% baseline
+    ad_accum = 0
+    FOR k = 1 TO 16
+        ADCIN 24, i
+        ad_accum = ad_accum + i
+        PAUSEUS 50
+    NEXT k
+    Opas100 = ad_accum / 16
+    HSEROUT ["   100% Target Duty100 = ", DEC Duty100, " | Opas100 = ", DEC Opas100, 13, 10]
+
+    ' 2. DBL BLINK @ 50 & Wait for Button Push
+    HSEROUT [13, 10, "3. [PROMPT] Insert 50% ND Filter into tube!", 13, 10]
+    HSEROUT ["   Press button when filter is in place...", 13, 10]
+
+Wait_50_Push:
+    ' Double blink Green LED pattern (ON-OFF-ON-OFF-PAUSE)
+    LEDG = 1: PAUSE 80: LEDG = 0: PAUSE 80
+    LEDG = 1: PAUSE 80: LEDG = 0: PAUSE 400
+
+    IF ButIn = 1 THEN
+        ' Debounce and wait for release
+        WHILE ButIn = 1
+            PAUSE 10
+        WEND
+        GOTO Do_Cal_50
+    ENDIF
+    GOTO Wait_50_Push
+
+Do_Cal_50:
+    ' 3. BUT PUSH -> CAL @ 50
+    HSEROUT ["   Sampling 50% ND Filter...", 13, 10]
+    PAUSE 300
+    ad_accum = 0
+    FOR k = 1 TO 16
+        ADCIN 24, i
+        ad_accum = ad_accum + i
+        PAUSEUS 50
+    NEXT k
+    Opas50 = ad_accum / 16
+    HSEROUT ["   50% Point Stored! Opas50 = ", DEC Opas50, 13, 10]
+
+    ' 4. DONE -> SOLID BLINK
+    HSEROUT [13, 10, "=== CALIBRATION COMPLETE! ===", 13, 10]
+    HSEROUT ["   Remove filter. Resuming normal run...", 13, 10, 13, 10]
+    LEDG = 1
+    PAUSE 1500
+    LEDG = 0
+
+    HPWM 1, Duty100, 2000
+    RETURN
+
+END

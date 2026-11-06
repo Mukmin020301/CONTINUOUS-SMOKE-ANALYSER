@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 988.8420000000001 1895.4" width="988.8420000000001" height="1895.4" style="--bg:#FFFFFF;--fg:#3B3B3B;--line:#3B3B3B;--accent:#005FB8;--muted:#3B3B3BCC;--surface:#F8F8F8;--border:#3B3B3B;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="STATE_WARMUP" data-label="STATE_WARMUP">
+  <rect x="594.82" y="337.5" width="182.428" height="853.9999999999999" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="594.82" y="337.5" width="182.428" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="606.82" y="351.5" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">STATE_WARMUP</text>
+</g>
+<g class="subgraph" data-id="STATE_MEASURE" data-label="STATE_MEASURE">
+  <rect x="355.547" y="1307.8000000000002" width="202.624" height="547.6" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="355.547" y="1307.8000000000002" width="202.624" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="367.547" y="1321.8000000000002" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">STATE_MEASURE</text>
+</g>
+<polyline class="edge" data-from="_start" data-to="STATE_BOOT" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Power ON" points="686.0340000000001,68 686.0340000000001,184.3" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_BOOT" data-to="STATE_WARMUP" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Load EEPROM Cal" points="686.0340000000001,221.2 686.0340000000001,337.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_WARMUP" data-to="STATE_MEASURE" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Tuning OK (Green Solid)" points="640.4270000000001,1191.5 640.4270000000001,1227.5000000000002 528.618,1227.5000000000002 528.618,1283.8000000000002 477.1214,1283.8000000000002 477.1214,1307.8000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_WARMUP" data-to="STATE_ERROR" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Light Blocked / Sooted (Red Solid)" points="731.6410000000001,1191.5 731.6410000000001,1227.5 865.8760000000001,1227.5 865.8760000000001,1307.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_MEASURE" data-to="STATE_CALIBRATE_50" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Tekan SW2 (Green Blinking)" points="436.5966,1307.8000000000002 436.5966,1283.8000000000002 385.1,1283.8000000000002 385.1,1227.5000000000002 309.99166666666656,1227.5000000000002 309.99166666666656,1183.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_CALIBRATE_50" data-to="STATE_MEASURE" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Masukkan Filter ND2 &amp; Tekan SW2 (Save to EEPROM)" points="246.60833333333323,1183.5 246.60833333333323,1251.5000000000002 171.5,1251.5000000000002 171.5,1295.8000000000002 396.07180000000005,1295.8000000000002 396.07180000000005,1307.8000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STATE_MEASURE" data-to="STATE_WARMUP" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Long Press SW2 (Force Re-Zero)" points="517.6462,1307.8000000000002 517.6462,1295.8000000000002 686.0340000000001,1295.8000000000002 686.0340000000001,1191.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="_start2" data-to="WarmupDelay" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="10s Thermal Stabilize" points="686.32,409.5 686.32,525.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="WarmupDelay" data-to="TunePWM" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Adjust LED to 4.0V" points="686.32,562.7 686.32,679" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="TunePWM" data-to="ReadV100" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Measure V100" points="686.32,715.9 686.32,832.2" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="ReadV100" data-to="DarkCheck" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Turn OFF LED -&gt; Measure V0" points="686.32,869.1 686.32,985.4" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DarkCheck" data-to="CheckSoot" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Duty &gt; 95%?" points="686.32,1022.3 686.32,1146.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="_start3" data-to="SampleADC" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Read OPT101 (EMA Filter)" points="457.047,1379.8000000000002 457.047,1496.1000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="SampleADC" data-to="CalcBeerLambert" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Lagrange Trans% &amp; k = -ln(T)/0.215" points="457.047,1533.0000000000002 457.047,1649.3000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="CalcBeerLambert" data-to="OutputPWM" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="0.5V-4.5V Scaled or 0-5V Raw" points="457.047,1686.2000000000003 457.047,1802.5000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="edge-label" data-from="_start" data-to="STATE_BOOT" data-label="Power ON">
+  <rect x="653.5340000000001" y="111" width="64.57600000000001" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="685.8220000000001" y="126.15" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Power ON</text>
+</g>
+<g class="edge-label" data-from="STATE_BOOT" data-to="STATE_WARMUP" data-label="Load EEPROM Cal">
+  <rect x="632.5340000000001" y="264.2" width="106.156" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="685.6120000000001" y="279.34999999999997" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Load EEPROM Cal</text>
+</g>
+<g class="edge-label" data-from="STATE_WARMUP" data-to="STATE_MEASURE" data-label="Tuning OK (Green Solid)">
+  <rect x="463.61800000000005" y="1234.5000000000002" width="129.916" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="528.576" y="1249.6500000000003" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Tuning OK (Green Solid)</text>
+</g>
+<g class="edge-label" data-from="STATE_WARMUP" data-to="STATE_ERROR" data-label="Light Blocked / Sooted (Red Solid)">
+  <rect x="778.3760000000002" y="1234.5" width="174.466" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="865.6090000000002" y="1249.65" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Light Blocked / Sooted (Red Solid)</text>
+</g>
+<g class="edge-label" data-from="STATE_MEASURE" data-to="STATE_CALIBRATE_50" data-label="Tekan SW2 (Green Blinking)">
+  <rect x="310.1" y="1234.5000000000002" width="149.518" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="384.85900000000004" y="1249.6500000000003" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Tekan SW2 (Green Blinking)</text>
+</g>
+<g class="edge-label" data-from="STATE_CALIBRATE_50" data-to="STATE_MEASURE" data-label="Masukkan Filter ND2 &amp; Tekan SW2 (Save to EEPROM)">
+  <rect x="36" y="1258.5000000000002" width="270.1" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="171.05" y="1273.6500000000003" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Masukkan Filter ND2 &amp; Tekan SW2 (Save to EEPROM)</text>
+</g>
+<g class="edge-label" data-from="STATE_MEASURE" data-to="STATE_WARMUP" data-label="Long Press SW2 (Force Re-Zero)">
+  <rect x="597.5340000000001" y="1258.5000000000002" width="176.842" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="685.9550000000002" y="1273.6500000000003" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Long Press SW2 (Force Re-Zero)</text>
+</g>
+<g class="edge-label" data-from="_start2" data-to="WarmupDelay" data-label="10s Thermal Stabilize">
+  <rect x="628.32" y="452.5" width="115.066" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="685.8530000000001" y="467.65" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">10s Thermal Stabilize</text>
+</g>
+<g class="edge-label" data-from="WarmupDelay" data-to="TunePWM" data-label="Adjust LED to 4.0V">
+  <rect x="634.32" y="605.7" width="103.78000000000003" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="686.21" y="620.85" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Adjust LED to 4.0V</text>
+</g>
+<g class="edge-label" data-from="TunePWM" data-to="ReadV100" data-label="Measure V100">
+  <rect x="643.8200000000002" y="758.9" width="84.178" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="685.9090000000001" y="774.05" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Measure V100</text>
+</g>
+<g class="edge-label" data-from="ReadV100" data-to="DarkCheck" data-label="Turn OFF LED -&gt; Measure V0">
+  <rect x="606.8200000000002" y="912.1" width="158.428" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="686.0340000000001" y="927.25" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Turn OFF LED -&gt; Measure V0</text>
+</g>
+<g class="edge-label" data-from="DarkCheck" data-to="CheckSoot" data-label="Duty &gt; 95%?">
+  <rect x="649.32" y="1065.2999999999997" width="73.486" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="686.0630000000001" y="1080.4499999999998" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Duty &gt; 95%?</text>
+</g>
+<g class="edge-label" data-from="_start3" data-to="SampleADC" data-label="Read OPT101 (EMA Filter)">
+  <rect x="389.547" y="1422.8000000000002" width="134.074" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="456.58400000000006" y="1437.9500000000003" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Read OPT101 (EMA Filter)</text>
+</g>
+<g class="edge-label" data-from="SampleADC" data-to="CalcBeerLambert" data-label="Lagrange Trans% &amp; k = -ln(T)/0.215">
+  <rect x="367.547" y="1576" width="178.624" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="456.85900000000004" y="1591.15" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Lagrange Trans% &amp; k = -ln(T)/0.215</text>
+</g>
+<g class="edge-label" data-from="CalcBeerLambert" data-to="OutputPWM" data-label="0.5V-4.5V Scaled or 0-5V Raw">
+  <rect x="378.547" y="1729.2" width="156.64600000000002" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="456.87" y="1744.3500000000001" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">0.5V-4.5V Scaled or 0-5V Raw</text>
+</g>
+<g class="node" data-id="_start" data-label="" data-shape="state-start">
+  <circle cx="686.0340000000001" cy="54" r="12" fill="var(--_text)" stroke="none" />
+</g>
+<g class="node" data-id="STATE_BOOT" data-label="STATE_BOOT" data-shape="rounded">
+  <rect x="621.3400000000001" y="184.3" width="129.38799999999998" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.0340000000001" y="202.75" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">STATE_BOOT</text>
+</g>
+<g class="node" data-id="STATE_ERROR" data-label="STATE_ERROR" data-shape="rounded">
+  <rect x="796.7360000000001" y="1307.8" width="138.27999999999997" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="865.8760000000001" y="1326.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">STATE_ERROR</text>
+</g>
+<g class="node" data-id="STATE_CALIBRATE_50" data-label="STATE_CALIBRATE_50" data-shape="rounded">
+  <rect x="183.2249999999999" y="1146.6" width="190.14999999999995" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="278.2999999999999" y="1165.05" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">STATE_CALIBRATE_50</text>
+</g>
+<g class="node" data-id="_start2" data-label="" data-shape="state-start">
+  <circle cx="686.32" cy="395.5" r="12" fill="var(--_text)" stroke="none" />
+</g>
+<g class="node" data-id="WarmupDelay" data-label="WarmupDelay" data-shape="rounded">
+  <rect x="624.2195" y="525.8" width="124.20099999999998" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.32" y="544.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">WarmupDelay</text>
+</g>
+<g class="node" data-id="TunePWM" data-label="TunePWM" data-shape="rounded">
+  <rect x="634.2230000000001" y="679" width="104.194" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.32" y="697.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">TunePWM</text>
+</g>
+<g class="node" data-id="ReadV100" data-label="ReadV100" data-shape="rounded">
+  <rect x="636.446" y="832.2" width="99.748" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.32" y="850.6500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">ReadV100</text>
+</g>
+<g class="node" data-id="DarkCheck" data-label="DarkCheck" data-shape="rounded">
+  <rect x="631.259" y="985.4" width="110.122" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.32" y="1003.85" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">DarkCheck</text>
+</g>
+<g class="node" data-id="CheckSoot" data-label="CheckSoot" data-shape="rounded">
+  <rect x="632.7410000000001" y="1146.6" width="107.158" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="686.32" y="1165.05" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">CheckSoot</text>
+</g>
+<g class="node" data-id="_start3" data-label="" data-shape="state-start">
+  <circle cx="457.047" cy="1365.8000000000002" r="12" fill="var(--_text)" stroke="none" />
+</g>
+<g class="node" data-id="SampleADC" data-label="SampleADC" data-shape="rounded">
+  <rect x="401.245" y="1496.1000000000001" width="111.604" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="457.047" y="1514.5500000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">SampleADC</text>
+</g>
+<g class="node" data-id="CalcBeerLambert" data-label="CalcBeerLambert" data-shape="rounded">
+  <rect x="383.461" y="1649.3000000000002" width="147.172" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="457.047" y="1667.7500000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">CalcBeerLambert</text>
+</g>
+<g class="node" data-id="OutputPWM" data-label="OutputPWM" data-shape="rounded">
+  <rect x="401.98600000000005" y="1802.5000000000002" width="110.122" height="36.900000000000006" rx="6" ry="6" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="457.047" y="1820.9500000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">OutputPWM</text>
+</g>
+</svg>

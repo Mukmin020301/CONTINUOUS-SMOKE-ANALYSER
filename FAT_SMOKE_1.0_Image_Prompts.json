@@ -1,0 +1,62 @@
+{
+  "project_name": "FAT SMOKE 1.0",
+  "project_type": "Closed-Flow Continuous Diesel Smoke Analyzer (Opacimeter)",
+  "prompts": [
+    {
+      "id": "hero_cutaway_view",
+      "title": "1. Pandangan Utama Produk Siap (3D Cutaway Hero View)",
+      "purpose": "Menunjukkan bentuk luaran casing siap serta keratan rentas dalaman tiub pemanas & sistem optik",
+      "prompt": "Professional 3D industrial product hero render of the FAT SMOKE 1.0 Continuous Smoke Analyzer for automotive diesel engine dyno testing. A portable oblong desktop instrument measuring approximately 48cm long, 11cm wide, 13cm high, constructed from premium matte dark graphite grey powder-coated sheet metal with clean chamfers, an integrated ergonomic carry handle on top, and four vibration-damping rubber feet. An artistic cutaway section reveals the internal heated core: a central 30cm stainless steel sampling tube wrapped in an amber-orange silicone heating pad and titanium exhaust thermal wrap. Inside the tube, a brilliant 550nm collimated green optical beam travels through the chamber. At one end, a pristine white cylindrical PTFE Teflon optical housing holds a 25mm protective optical glass window, a 22mm plano-convex focusing lens, and a matte black 3D-printed PETG end cap with an OPT101 photodetector. A 12V 9733 turbo centrifugal blower fan is mounted near the air slots with an exhaust duct. At the top, a 6mm stainless steel inlet elbow pipe enters the chamber. The front control panel features a glowing cyan OLED digital display showing 'OPACITY: 12.8% | k: 0.34 m⁻¹', two tactile metallic push buttons ('CAL' and 'MODE'), and a bright green status LED indicator. Photographed in an ultra-clean, high-tech automotive dyno testing workshop with soft volumetric studio lighting, realistic reflections, shallow depth of field, 8k resolution, cinematic commercial product render.",
+      "negative_prompt": "blurry, low resolution, cartoon, sketch, distorted geometry, noisy, ugly, draft, watermark, signature",
+      "recommended_aspect_ratio": "16:9",
+      "parameters": {
+        "midjourney": "--ar 16:9 --style raw --v 6.1",
+        "flux_guidance_scale": 3.5,
+        "sampler": "DPM++ 2M Karras",
+        "steps": 30
+      }
+    },
+    {
+      "id": "exploded_assembly_view",
+      "title": "2. Pandangan Komponen Meletup (Exploded 3D Assembly CAD View)",
+      "purpose": "Menunjukkan susunan setiap satu komponen optik dan mekanikal secara terlerai sepanjang satu paksi",
+      "prompt": "Clean engineering exploded 3D CAD assembly view of the optical sampling train for the FAT SMOKE 1.0 Smoke Analyzer, floating symmetrically on a technical blueprint gradient background. From left to right along a luminous laser-straight center axis: a matte black 3D-printed PETG end cap with center cable gland; a circular purple OPT101 CJMCU photodetector circuit board; a precision-machined cylindrical white PTFE Teflon optical housing (OD 30mm x 50mm) showing its stepped interior; a high-precision 22mm plano-convex optical glass lens; a dark brown Viton FKM O-ring (23x3mm); a crystal-clear 25mm flat watch crystal glass window; a polished 300mm SUS304 stainless steel chamber tube with an upward 6mm smoke inlet elbow and three laser-cut air curtain slots (3mm, 4mm, 5mm); an amber silicone heating jacket wrapped around the tube; and a high-power 550nm green LED collimator emitter at the far right. Subtle holographic dimension lines, glowing particle accents, clean engineering documentation aesthetic, studio lighting, hyper-detailed mechanical textures, 8k render.",
+      "negative_prompt": "cluttered, messy, misaligned, broken parts, lowpoly, blurry, hand-drawn, cartoon",
+      "recommended_aspect_ratio": "16:9",
+      "parameters": {
+        "midjourney": "--ar 16:9 --style raw --v 6.1",
+        "flux_guidance_scale": 4.0,
+        "sampler": "Euler a",
+        "steps": 35
+      }
+    },
+    {
+      "id": "macro_ptfe_optical_housing",
+      "title": "3. Pandangan Dekat Perumah Optik PTFE (Macro Optical Detail)",
+      "purpose": "Menunjukkan ketelitian perincian komponen PTFE, kanta kaca 22mm, dan cap belakang",
+      "prompt": "Extreme macro photographic studio render of the precision white PTFE Teflon optical housing assembly for an automotive smoke meter. The milky-white, satin-textured fluoropolymer cylinder features CNC-turned stepped faces and a male spigot collar. A crystal-clear 25mm circular glass window reflects subtle studio softboxes, sealed securely against a dark Viton rubber ring. Behind it rests a flawless 22mm plano-convex optical lens that refracts an intense green light focal cone down the central 20mm bore. Snugly mounted on the rear neck is a textured black PETG 3D-printed slip-on cap with neat layer lines, securing the purple OPT101 sensor module with flexible silicone multi-conductor wires exiting through a central collar. High-end industrial macro photography, crisp depth of field with buttery smooth bokeh, sharp optical reflections, photorealistic material textures.",
+      "negative_prompt": "scratches, smudges, plastic artifacts, out of focus, distorted, cartoon, overexposed",
+      "recommended_aspect_ratio": "4:3",
+      "parameters": {
+        "midjourney": "--ar 4:3 --style raw --v 6.1",
+        "flux_guidance_scale": 3.0,
+        "sampler": "DPM++ SDE Karras",
+        "steps": 30
+      }
+    },
+    {
+      "id": "dyno_in_action_view",
+      "title": "4. Produk Sedang Beroperasi di Atas Mesin Dyno (In-Action Testing)",
+      "purpose": "Menunjukkan alat ini sedang digunakan mengukur asap ekzos kereta diesel di bengkel prestasi",
+      "prompt": "Action shot of the FAT SMOKE 1.0 continuous opacity meter operating inside a high-end motorsports diesel dynamometer testing facility. The dark industrial analyzer sits firmly on a brushed steel diagnostic cart beside a high-performance diesel pickup truck on a rolling chassis dyno. A flexible high-temperature stainless steel braided hose with thermal insulation connects a 6mm exhaust tailpipe sampling wand into the unit's top inlet. The unit's cyan OLED display brightly indicates live readings: 'OPACITY: 38.6% | k: 1.15 m⁻¹ | TEMP: 102°C', while a green running status LED glows. The top turbo blower fan is quietly exhausting filtered clean sample air. In the background, blurred dyno computer screens, exhaust extraction ducts, and automotive workshop tools create an authentic engineering atmosphere. Dramatic rim lighting, realistic dust motes in light rays, photojournalistic style, Canon EOS R5 50mm f/1.8.",
+      "negative_prompt": "fake, 3D render look, CGI, plastic cars, distorted hands, cartoonish, low quality, oversaturated",
+      "recommended_aspect_ratio": "16:9",
+      "parameters": {
+        "midjourney": "--ar 16:9 --style raw --v 6.1",
+        "flux_guidance_scale": 3.5,
+        "sampler": "DPM++ 2M Karras",
+        "steps": 30
+      }
+    }
+  ]
+}

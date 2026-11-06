@@ -1,0 +1,225 @@
+'****************************************************************
+'*  Name    : Drive By Wire DBW.BAS                             *
+'*  Author  : Horizon   (c) 2022                                *
+'*  Reads a 0-5V analog signal (Throttle In), and outputs:      *
+'*  a V1 to V2 "increasing" throttle sig (V1~ 0.5V, V2~4.0V)    *
+'*  a V3 to V4 Increadiong or "decreasing" Thrttle Sig          *
+'*  An "Idle" switch (switching ON at V3 ~1V, and it's inverse  *
+'*  A WOT switch (switching ON at V4 ~3.5V, and it's inverse    *
+'*  All these voltages can be set via a serial com interface    *
+'  PIC 18F26K22
+'****************************************************************
+'DECLARATION *******************************************************************
+'18F46K22 Controller              !!! MAKE SURE 18F46K22.INC is not messing with the CCP pins:
+'		__CONFIG    _CONFIG3H, _PBADEN_OFF_3H & _CCP2MX_PORTC2_3H & _CCP1MX_PORTD1_3H
+'OSCILLATOR=====================================================================
+OSCCON=%01110111                        'IDLEN IRCF<2:0> OSTS HFIOFS SCS<1:0> set to Fosc=16MHz
+define  OSC 16
+DEFINE ADC_BITS 8                          'software setting
+
+'I/O CONFIG=====================================================================
+ANSELA = %00101001                      '  ANSA5  ANSA3 ANSA2 ANSA1 ANSA0
+TRISA  = %11111001                      ''1'nput/tri-state, '0'utput
+
+ANSELB = %00010000                      '  ANSB5 ANSB4 ANSB3 ANSB2 ANSB1 ANSB0
+TRISB  = %11011000
+
+ANSELC = %00000000                      'ANSC7 ANSC6 ANSC5 ANSC4 ANSC3 ANSC2   '1=analog, 0=digital
+TRISC  = %10101001
+
+ANSELD = %00010000                      'ANSD7 ANSD6 ANSD5 ANSD4 ANSD3 ANSD2 ANSD1 ANSD0
+TRISD  = %10110001
+
+'Timer2 - Set up for HPWM -----------------------
+T2CON.6 = 0                             '16 bit
+T2CON.5 = 0                             'Ticks on clock
+T2CON.4 = 1
+T2CON.3 = 0
+T2CON.2 = 1   
+T2CON.1 = 1                             '<1:0> - 1:16 prescaler
+T2CON.0 = 1
+T2CON.7 =1 'Turn On
+
+'HPWM CONFIG====================================================================
+CCPtmrs0 = %00000000    'All CCP to use TMR2
+CCP1con = %00001100     'set ccp1 to pwm mode
+CCP4con = %00001100     'set ccp4 to pwm mode
+DEFINE CCP1_REG PORTC       'Hpwm 1 pin port============ HPWM on E.0 Setup =======
+DEFINE CCP1_BIT 2           'Hpwm 1 pin bit
+DEFINE CCP2_REG PORTC       'These are NOT arbitrarily reassignable to just any pin!!
+DEFINE CCP2_BIT 1
+T2con = %00000101           'set postscale 1:1 and prescale 4
+
+'HSERCOM Setup =================================================================
+TXSTA1=%00100100              'These are setting up serial for Hardware control
+RCSTA1=%10010000              'at 9600 baud, non-inverted, 8 bits, no parity
+BAUDCON1=%01001000
+SPBRG1=160
+SPBRGH1=1
+
+'PORT MAPPING & VARIABLES=======================================================
+'StatLED         var PORTC.4
+LED1            var portD.2
+Swi             var PORTB.5 'Inj Sens 4
+Sii             var PORTB.2 'Inj Sens 3            
+Si              var PORTB.0 'Inj sens 1
+Sw              var PORTB.1 'Inj sens 2
+n               var byte
+i               var byte                'counter
+j               var byte
+s               var byte                'String 
+t               var word
+V1              var word                'Min TPS Out
+V2              var word                'Max TPS Out
+V3              var word
+V4              var word
+Vi              var word                'Voltage Idle Switch
+Vw              var word                'Voltage WOT Switch
+TPS             var word                'TPS Input
+TPSav           Var Word
+TPSO            var word                'TPS outout
+TPSN            var word                'Inverted TPS
+duty1           var byte
+duty2           var byte
+SIO             var bit                 'Idle Switch
+SWO             var bit                 'WOT Switch
+cyc             var word                'Ppower CYcles
+num             var byte
+'EEPROM=========================================================================
+'    V1      V2     Vi     Vw     cyc     V3       V4These data written to eeprom when programmed
+data 0,41, 0,173, 0,10,  0,230,    0,0,  0,82,   0,235  
+'    TPS1L  TPS1H                        TPS2L    TPS2H
+
+'INITIALIZATION*****************************************************************
+clear                                   'CLEAR ALL VARIABLES
+read 0,V1.byte1                         'Read values from EEprom
+read 1,V1.byte0
+read 2,V2.byte1 
+read 3,V2.byte0
+read 4,Vi.byte1     'Idle Switch
+read 5,Vi.byte0
+read 6,Vw.byte1     'Wide Open Switch
+read 7,Vw.byte0
+read 8,cyc.byte1
+read 9,cyc.byte0
+read 10,V3.byte1
+read 11,V3.Byte0
+read 12,V4.Byte1
+read 13,V4.Byte0
+cyc=cyc+1           'Increment number of power cycles and write
+write 8,cyc.byte1
+write 9,cyc.byte0
+
+Hserout ["Focus Applied Technologies Drive By Wire Controller",13]          '2=Normal, 6=Inverted
+for i=1 to 5
+    led1=1:portc.2=1:portb.0=1:pause 800
+    led1=1-led1:portc.2=0:portb.0=0:pause 800
+next i
+Hserout ["Commands: Enter 3 digit #(0-255) followed by letter (eg. 023L) ",13] 
+Hserout ["###L Set TPSlo, ###H Set TPShi, ###I Set Idle Sw, ###W Set WOT Sw",13,11,13] 
+Hserout ["TPS in, TPS1o, TPS2o, Sidle, Swot",13] 
+
+Main:'**************************************************************************
+    t=t+1
+    if t>tps then 'Blink
+        led1=0
+    endif
+    if t=300 then 
+        t=0:led1=1
+    endif
+    adcin 24,tps                'Read Analog input value of TPS pin (24)  
+    tpsav= (3*tpsav + tps)/4
+    TPSO=V1+(v2-v1)*tps/255
+    TPSn=v3+(v4-v3)*tps/255
+    hpwm 1, TPSO.byte0, 1000
+    hpwm 2, tpsN.byte0, 1000'HPWM out TPSO and N
+    select case tps  '============== Set Switches
+    case is <Vi
+        SIO=0
+        SWO=0
+    case is <Vw
+        SIO=1
+        SWO=0
+    case else
+        SIO=1
+        SWO=1
+    end select
+    si=sio
+    sii=1-sio
+    sw=swo
+    swi=1-swo
+    
+    j=j+1
+    if j=100 then 
+      j=0
+      Hserout [#tps,",",#tpso,",",#tpsn, ",",#sio, ",", #swo,13]          '2=Normal, 6=Inverted
+    endif
+
+
+if j=0 then     'Only check once in a big loop (to prevent slowing tings down) 
+    Hserin 10,BAU,[s]
+    num=0
+    Hserout ["Commands: Enter 3 digit #(0-255) followed by letter (eg. 023L) ",13] 
+    HSEROUT ["###L Set Low  TPS1 output voltage ",#V1,13]
+    HSEROUT ["###H Set High TPS1 output voltage ",#V2,13]
+    HSEROUT ["###K Set Low  TPS2 output voltage ",#V3,13]
+    HSEROUT ["###G Set High TPS2 output voltage ",#V4,13]
+    HSEROUT ["###I Set Idle Switch voltage ",#Vi,13]
+    HSEROUT ["###W Set WOT  Switch voltage ",#Vw,13]
+    HSEROUT ["Q=Quit      Z=Burn to EEPROM ",13]
+    GetChar:
+    Hserin 10000,BAU,[s]         ' pin, mode, timeout, label, var
+    HSEROUT [s]                 ' Echo to screen so they can see it
+    if s="Q" then goto BAU
+    if s>47 and s<=59 then 
+        num=num*10+s-48                 'Accumulate number
+        goto GetChar
+    endif
+    select case s
+    case "L"
+        V1=num
+        HSEROUT ["Low TPS1: ",#V1,13]
+    case "H"
+        V2=num
+        HSEROUT ["High TPS1: ",#V2,13]
+    case "K"
+        V3=num
+        HSEROUT ["Low TPS2: ",#V3,13]
+    case "G"
+        V4=num
+        HSEROUT ["High TPS2: ",#V4,13]
+    case "I"
+        Vi=num
+        HSEROUT ["Idle Switch TPS: ",#Vi,13]
+    case "W"
+        Vw=num
+        HSEROUT ["WOT Switch TPS: ",#Vw,13]
+    case "Z" ' Burn   
+        write 0,V1.byte1
+        write 1,V1.byte0
+        write 2,V2.byte1 
+        write 3,V2.byte0
+        write 4,Vi.byte1
+        write 5,Vi.byte0
+        write 6,Vw.byte1
+        write 7,Vw.byte0
+        write 10,V3.byte1
+        write 11,V3.Byte0
+        write 12,V4.Byte1
+        write 13,V4.Byte0
+        HSEROUT ["Burned.",13]
+    case "Q" 'Halt (go to Idle mode)
+        goto BAU    
+    end select
+    goto GetChar
+    BBau:
+        Hserout [13]
+    BAU: 'Business as usual
+endif
+goto main
+
+                                        
+
+
+
+
