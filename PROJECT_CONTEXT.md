@@ -17,6 +17,7 @@
 ---
 
 ## 2. Peta Sambungan Perkakasan (Fuel Stretcher V2.0 -> Komponen)
+* **Fail Skematik Penuh PCB:** [`FUEL STRETCHER V2.0/FS_V2.0.pdf`](FUEL%20STRETCHER%20V2.0/FS_V2.0.pdf) (Skematik & litar Fuel Stretcher V2.0)
 * **P1 Pin 15 (`injOut2` / RC2 / Q2 IGBT):** Memacu katod Red LED pemancar cahaya (PWM 2 kHz)
 * **P1 Pin 2 (`TPS` / RD4 / AN24):** Isyarat voltan analog daripada sensor fotodetektor OPT101 (melalui U2 Op-Amp)
 * **P1 Pin 8 (`Boost` / RA5):** Butang kalibrasi (*Pushbutton* ke +5V dengan perintang pull-down 1.5k $\Omega$ ke GND)
