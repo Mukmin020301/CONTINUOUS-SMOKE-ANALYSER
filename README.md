@@ -16,7 +16,8 @@ Continuous optical smoke opacity meter and absorption coefficient ($k$-value) an
 
 ## 📂 Repository Contents
 - **`firmware/`**:
-  - `SMOKE-1.pbp`: Primary PICBASIC PRO firmware with non-blocking timing, 16-sample ADC oversampling, Beer-Lambert $k$-value lookup, and whiteboard-compliant 3-point calibration.
+  - `SMOKE-1.pbp`: Baseline PICBASIC PRO bench test firmware (stable 6 Nov 2026 version).
+  - `SMOKE-2.pbp`: Hardware-verified PICBASIC PRO firmware with non-blocking timing, 8-bit duty cycle scan, 16-sample ADC oversampling, Beer-Lambert $k$-value lookup table ($L = 0.215\text{ m}$), and whiteboard-compliant 3-point calibration (0%, 100%, 50% ND filter).
   - `fat_smoke_oled_meter/`: Secondary OLED dashboard display sketch (Arduino Nano).
   - `legacy/`: Historical C and PBP firmware backups.
 - **`hardware/`**:

@@ -56,3 +56,10 @@ All generated and modified code MUST strictly adhere to the senior engineering c
 
 ## 5. Reference Codebase
 - Primary style reference: `reference/DBW.pbp` (or `D:\Users\ANG\Desktop\Mukmin\DBW\DBW.pbp`)
+
+---
+
+## 6. Versioning & Development Workflow
+- **NEVER** overwrite the stable baseline `SMOKE-1.pbp` directly when experimenting or adding new features.
+- Always create a new file (e.g. `SMOKE-2.pbp`) for new modifications, tests, or bug fixes.
+- Only merge back into `SMOKE-1.pbp` once the code is 100% verified, tested on hardware, and approved by the user.
